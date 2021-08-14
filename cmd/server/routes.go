@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
+// routes returns a http Handler that routes requests based on URL
 func routes() http.Handler {
 	mux := chi.NewRouter()
 

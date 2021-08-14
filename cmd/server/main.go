@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/NamanBalaji/mise/internal/config"
+	"github.com/NamanBalaji/mise/internal/database"
 	"github.com/NamanBalaji/mise/internal/handlers"
 )
 
@@ -17,7 +18,11 @@ func main() {
 		Version: 1,
 	}
 
-	repo := handlers.NewRepo(app)
+	// Initialize the database
+	db := database.NewDB(true)
+
+	// Initialize the handlers
+	repo := handlers.NewRepo(app, db)
 	handlers.NewHandlers(repo)
 
 	port := flag.String("p", "6379", "")
