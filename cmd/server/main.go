@@ -18,7 +18,10 @@ func main() {
 		Version: 1,
 	}
 
+	// Initialize the database
 	db := database.NewDB(true)
+
+	// Initialize the handlers
 	repo := handlers.NewRepo(app, db)
 	handlers.NewHandlers(repo)
 
