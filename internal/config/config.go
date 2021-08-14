@@ -1,1 +1,5 @@
-package connfig
+package config
+
+type AppConfig struct {
+	Version int
+}
