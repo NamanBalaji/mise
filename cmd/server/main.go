@@ -21,6 +21,8 @@ func main() {
 	handlers.NewHandlers(repo)
 
 	port := flag.String("p", "6379", "")
+	flag.Parse()
+
 	portNum := fmt.Sprintf(":%s", *port)
 
 	srv := &http.Server{

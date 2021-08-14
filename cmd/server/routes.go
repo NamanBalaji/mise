@@ -10,6 +10,8 @@ import (
 func routes() http.Handler {
 	mux := chi.NewRouter()
 
+	mux.Use(NoSurf)
+
 	mux.Get("/ping", handlers.Repo.Ping)
 
 	return mux
