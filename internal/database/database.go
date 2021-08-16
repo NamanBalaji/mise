@@ -39,3 +39,22 @@ func (db *DB) Set(r *resp.SetRequest) (resp.SetResponse, error) {
 	response.Status = 0
 	return response, nil
 }
+
+func (db *DB) Get(r *resp.GetRequest) (resp.GetResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	response := resp.GetResponse{
+		Message: "No such key present",
+		Value:   nil,
+		Status:  1,
+	}
+
+	if val, ok := db.database[r.Key]; ok {
+		response.Value = val
+		response.Message = "OK"
+		response.Status = 0
+	}
+
+	return response, nil
+}

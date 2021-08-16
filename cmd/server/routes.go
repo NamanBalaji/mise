@@ -15,5 +15,7 @@ func routes() http.Handler {
 
 	mux.Post("/set", handlers.Repo.Set)
 
+	mux.Post("/get", handlers.Repo.Get)
+
 	return mux
 }
