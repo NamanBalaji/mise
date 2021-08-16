@@ -1,6 +1,7 @@
 package database
 
 import (
+	"strings"
 	"sync"
 
 	"github.com/NamanBalaji/mise/internal/resp"
@@ -33,13 +34,21 @@ func (db *DB) Set(r *resp.SetRequest) (resp.SetResponse, error) {
 		response.Message = "please provide valid key and value"
 		return response, nil
 	}
-	db.database[r.Key] = r.Value
+
+	if _, ok := db.database[strings.ToLower(r.Key)]; ok {
+		response.Message = "key already present please use UPDATE if you are trying to update"
+		response.Status = 1
+		return response, nil
+	}
+
+	db.database[strings.ToLower(r.Key)] = r.Value
 
 	response.Message = "OK"
 	response.Status = 0
 	return response, nil
 }
 
+// Get is used to get a value associated with a key
 func (db *DB) Get(r *resp.GetRequest) (resp.GetResponse, error) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
@@ -50,7 +59,7 @@ func (db *DB) Get(r *resp.GetRequest) (resp.GetResponse, error) {
 		Status:  1,
 	}
 
-	if val, ok := db.database[r.Key]; ok {
+	if val, ok := db.database[strings.ToLower(r.Key)]; ok {
 		response.Value = val
 		response.Message = "OK"
 		response.Status = 0

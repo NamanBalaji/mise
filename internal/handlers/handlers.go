@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/NamanBalaji/mise/internal/config"
 	"github.com/NamanBalaji/mise/internal/database"
+	"github.com/NamanBalaji/mise/internal/helpers"
 	"github.com/NamanBalaji/mise/internal/resp"
 )
 
@@ -40,17 +40,15 @@ func (m *Repository) Ping(w http.ResponseWriter, r *http.Request) {
 // Set is used to set a key with a value
 func (m *Repository) Set(w http.ResponseWriter, r *http.Request) {
 	var body resp.SetRequest
-	req, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		w.Write([]byte("error occurred while reading the request body"))
-	}
-	err = json.Unmarshal(req, &body)
-	if err != nil {
-		w.Write([]byte("please check if the request body hs the correct structure"))
-	}
 
+	err := helpers.RequestToStruct(&body, r)
+	if err != nil {
+		w.Write([]byte(`{
+			"Error": "error occurred while reading the request body, please check if the request body hs the correct structure"
+		}`))
+		return
+	}
 	response, err := m.DB.Set(&body)
-
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return
@@ -70,13 +68,13 @@ func (m *Repository) Set(w http.ResponseWriter, r *http.Request) {
 // Get is used to get a key's value
 func (m *Repository) Get(w http.ResponseWriter, r *http.Request) {
 	var body resp.GetRequest
-	req, err := ioutil.ReadAll(r.Body)
+
+	err := helpers.RequestToStruct(&body, r)
 	if err != nil {
-		w.Write([]byte("error occurred while reading the request body"))
-	}
-	err = json.Unmarshal(req, &body)
-	if err != nil {
-		w.Write([]byte("please check if the request body hs the correct structure"))
+		w.Write([]byte(`{
+			"Error": "error occurred while reading the request body, please check if the request body hs the correct structure"
+		}`))
+		return
 	}
 
 	response, err := m.DB.Get(&body)

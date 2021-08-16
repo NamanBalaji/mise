@@ -6,7 +6,7 @@ type SetRequest struct {
 	Value interface{} `json:"value"`
 }
 
-// requesting structure for retrieving a key
+// request structure for retrieving a key
 type GetRequest struct {
 	Key string `json:"key"`
 }
