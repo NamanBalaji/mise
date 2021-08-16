@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/NamanBalaji/mise/internal/config"
 	"github.com/NamanBalaji/mise/internal/database"
+	"github.com/NamanBalaji/mise/internal/helpers"
+	"github.com/NamanBalaji/mise/internal/resp"
 )
 
 // Repository is a struct that contains  pointers to DB and App objects
@@ -32,4 +35,62 @@ func (m *Repository) Ping(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Pong"))
+}
+
+// Set is used to set a key with a value
+func (m *Repository) Set(w http.ResponseWriter, r *http.Request) {
+	var body resp.SetRequest
+
+	err := helpers.RequestToStruct(&body, r)
+	if err != nil {
+		w.Write([]byte(`{
+			"Error": "error occurred while reading the request body, please check if the request body hs the correct structure"
+		}`))
+		return
+	}
+	response, err := m.DB.Set(&body)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	resp, err := json.Marshal(response)
+
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write(resp)
+}
+
+// Get is used to get a key's value
+func (m *Repository) Get(w http.ResponseWriter, r *http.Request) {
+	var body resp.GetRequest
+
+	err := helpers.RequestToStruct(&body, r)
+	if err != nil {
+		w.Write([]byte(`{
+			"Error": "error occurred while reading the request body, please check if the request body hs the correct structure"
+		}`))
+		return
+	}
+
+	response, err := m.DB.Get(&body)
+
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	resp, err := json.Marshal(response)
+
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write(resp)
 }

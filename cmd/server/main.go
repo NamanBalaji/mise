@@ -18,15 +18,16 @@ func main() {
 		Version: 1,
 	}
 
+	port := flag.String("p", "6379", "The port you want to run the server on")
+	memory := flag.Bool("m", true, "Set to false if you want data to persist")
+	flag.Parse()
+
 	// Initialize the database
-	db := database.NewDB(true)
+	db := database.NewDB(*memory)
 
 	// Initialize the handlers
 	repo := handlers.NewRepo(app, db)
 	handlers.NewHandlers(repo)
-
-	port := flag.String("p", "6379", "")
-	flag.Parse()
 
 	portNum := fmt.Sprintf(":%s", *port)
 
