@@ -12,3 +12,9 @@ type GetResponse struct {
 	Status  int         `json:"status"`
 	Message string      `json:"message"`
 }
+
+type DeleteResponse struct {
+	Value   interface{} `json:"value"`
+	Status  int         `json:"status"`
+	Message string      `json:"message"`
+}

@@ -21,5 +21,7 @@ func routes() http.Handler {
 
 	mux.Post("/add", handlers.Repo.Add)
 
+	mux.Delete("/delete-element", handlers.Repo.DeleteIndex)
+
 	return mux
 }

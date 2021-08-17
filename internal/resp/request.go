@@ -24,3 +24,8 @@ type AddToArrayRequest struct {
 	Value interface{} `json:"value"`
 	Index int         `json:"index"`
 }
+
+type DeleteFromArrayRequest struct {
+	Key   string `json:"key"`
+	Index int    `json:"index"`
+}

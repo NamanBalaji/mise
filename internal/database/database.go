@@ -126,3 +126,47 @@ func (db *DB) AddToArray(r *resp.AddToArrayRequest) (resp.SetResponse, error) {
 	}
 	return response, errors.New("no such key present")
 }
+
+// DeleteFromArray deletes the element at the given index
+func (db *DB) DeleteFromArray(r *resp.DeleteFromArrayRequest) (resp.DeleteResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.DeleteResponse
+
+	if val, ok := db.database[strings.ToLower(r.Key)]; ok {
+		if fmt.Sprint(reflect.TypeOf(val)) != "[]interface {}" {
+			return response, errors.New("associated value is not an array")
+		}
+		value := val.([]interface{})
+		if r.Index < -1 || r.Index >= len(value) {
+			return response, errors.New("given index does not exist")
+		}
+
+		if r.Index == 0 {
+			response.Value = value[0]
+			value = value[1:]
+			db.database[strings.ToLower(r.Key)] = value
+			response.Message = "OK"
+			response.Status = 0
+			return response, nil
+		} else if r.Index == len(value)-1 {
+			response.Value = value[r.Index]
+			value = value[:len(value)-1]
+			db.database[strings.ToLower(r.Key)] = value
+			response.Message = "OK"
+			response.Status = 0
+			return response, nil
+		} else {
+			response.Value = value[r.Index]
+			var modifiedArray []interface{}
+			modifiedArray = append(modifiedArray, value[:r.Index]...)
+			modifiedArray = append(modifiedArray, value[r.Index+1:]...)
+			db.database[strings.ToLower(r.Key)] = modifiedArray
+			response.Message = "OK"
+			response.Status = 0
+			return response, nil
+		}
+	}
+	return response, errors.New("no such key present")
+}

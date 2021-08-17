@@ -126,6 +126,7 @@ func (m *Repository) GetRange(w http.ResponseWriter, r *http.Request) {
 	w.Write(resp)
 }
 
+// Add is the handler for appending an element into an array
 func (m *Repository) Add(w http.ResponseWriter, r *http.Request) {
 	var body resp.AddToArrayRequest
 	err := helpers.RequestToStruct(&body, r)
@@ -151,5 +152,32 @@ func (m *Repository) Add(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(resp)
+}
 
+// DeleteIndex is the handler for deleting an element from an array
+func (m *Repository) DeleteIndex(w http.ResponseWriter, r *http.Request) {
+	var body resp.DeleteFromArrayRequest
+	err := helpers.RequestToStruct(&body, r)
+	if err != nil {
+		w.Write([]byte(`{
+			"Error": "error occurred while reading the request body, please check if the request body hs the correct structure"
+		}`))
+		return
+	}
+	response, err := m.DB.DeleteFromArray(&body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	resp, err := json.Marshal(response)
+
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write(resp)
 }
