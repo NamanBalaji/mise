@@ -100,3 +100,43 @@ func (db *DB) GetRange(r *resp.GetRangeRequest) (resp.GetResponse, error) {
 	}
 	return response, nil
 }
+
+// AddToArray appends at a particular index or at the end
+func (db *DB) AddToArray(r *resp.AddToArrayRequest) (resp.SetResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	response := resp.SetResponse{
+		Message: "No such key present",
+		Status:  1,
+	}
+
+	if val, ok := db.database[strings.ToLower(r.Key)]; ok {
+		if fmt.Sprint(reflect.TypeOf(val)) != "[]interface {}" {
+			response.Message = "the associated value is not an array"
+			return response, nil
+		}
+		value := val.([]interface{})
+		if r.Index < -1 || r.Index >= len(value) {
+			response.Message = "given index does not exist"
+			response.Status = 1
+			return response, nil
+		}
+		if r.Index == -1 {
+			value = append(value, r.Value)
+			db.database[strings.ToLower(r.Key)] = value
+			response.Message = "OK"
+			response.Status = 0
+		} else {
+
+			var modifiedArray []interface{}
+			modifiedArray = append(modifiedArray, value[:r.Index]...)
+			modifiedArray = append(modifiedArray, r.Value)
+			modifiedArray = append(modifiedArray, value[r.Index:]...)
+			db.database[strings.ToLower(r.Key)] = modifiedArray
+			response.Message = "OK"
+			response.Status = 0
+		}
+	}
+	return response, nil
+}

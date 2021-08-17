@@ -17,3 +17,10 @@ type GetRangeRequest struct {
 	Start int    `json:"start"`
 	Stop  int    `json:"stop"`
 }
+
+// request structure for adding an element to an array
+type AddToArrayRequest struct {
+	Key   string      `json:"key"`
+	Value interface{} `json:"value"`
+	Index int         `json:"index"`
+}
