@@ -17,5 +17,6 @@ func routes() http.Handler {
 
 	mux.Post("/get", handlers.Repo.Get)
 
+	mux.Post("/get-range", handlers.Repo.GetRange)
 	return mux
 }

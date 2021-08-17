@@ -10,3 +10,10 @@ type SetRequest struct {
 type GetRequest struct {
 	Key string `json:"key"`
 }
+
+// request structure for retrieving a portion of an array
+type GetRangeRequest struct {
+	Key   string `json:"key"`
+	Start int    `json:"start"`
+	Stop  int    `json:"stop"`
+}

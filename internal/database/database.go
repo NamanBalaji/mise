@@ -1,6 +1,8 @@
 package database
 
 import (
+	"fmt"
+	"reflect"
 	"strings"
 	"sync"
 
@@ -65,5 +67,36 @@ func (db *DB) Get(r *resp.GetRequest) (resp.GetResponse, error) {
 		response.Status = 0
 	}
 
+	return response, nil
+}
+
+// GetRange returns a given portion of a slice
+func (db *DB) GetRange(r *resp.GetRangeRequest) (resp.GetResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	response := resp.GetResponse{
+		Message: "No such key present",
+		Value:   nil,
+		Status:  1,
+	}
+
+	if val, ok := db.database[strings.ToLower(r.Key)]; ok {
+		if fmt.Sprint(reflect.TypeOf(val)) != "[]interface {}" {
+			response.Message = "the associated value is not an array"
+			return response, nil
+		}
+		value := val.([]interface{})
+		if r.Start < 0 || r.Stop > len(value) {
+			response.Message = "range does not exist"
+			return response, nil
+		}
+		if r.Stop == -1 {
+			r.Stop = len(value)
+		}
+		response.Value = value[r.Start:r.Stop]
+		response.Message = "OK"
+		response.Status = 0
+	}
 	return response, nil
 }
