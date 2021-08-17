@@ -80,6 +80,7 @@ func (m *Repository) Get(w http.ResponseWriter, r *http.Request) {
 	response, err := m.DB.Get(&body)
 
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return
 	}
@@ -88,6 +89,7 @@ func (m *Repository) Get(w http.ResponseWriter, r *http.Request) {
 	resp, err := json.Marshal(response)
 
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return
 	}
@@ -108,6 +110,7 @@ func (m *Repository) GetRange(w http.ResponseWriter, r *http.Request) {
 	response, err := m.DB.GetRange(&body)
 
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return
 	}
@@ -134,6 +137,7 @@ func (m *Repository) Add(w http.ResponseWriter, r *http.Request) {
 	}
 	response, err := m.DB.AddToArray(&body)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return
 	}
