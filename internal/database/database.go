@@ -1,6 +1,9 @@
 package database
 
 import (
+	"errors"
+	"fmt"
+	"reflect"
 	"strings"
 	"sync"
 
@@ -30,9 +33,7 @@ func (db *DB) Set(r *resp.SetRequest) (resp.SetResponse, error) {
 
 	var response resp.SetResponse
 	if r.Key == "" || r.Value == nil {
-		response.Status = -1
-		response.Message = "please provide valid key and value"
-		return response, nil
+		return response, errors.New("invalid key or value")
 	}
 
 	if _, ok := db.database[strings.ToLower(r.Key)]; ok {
@@ -53,17 +54,136 @@ func (db *DB) Get(r *resp.GetRequest) (resp.GetResponse, error) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	response := resp.GetResponse{
-		Message: "No such key present",
-		Value:   nil,
-		Status:  1,
-	}
+	var response resp.GetResponse
 
 	if val, ok := db.database[strings.ToLower(r.Key)]; ok {
 		response.Value = val
 		response.Message = "OK"
 		response.Status = 0
-	}
 
-	return response, nil
+		return response, nil
+	}
+	return response, errors.New("no such key present")
+}
+
+func (db *DB) Delete(r *resp.DeleteRequest) (resp.DeleteResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.DeleteResponse
+
+	if val, ok := db.database[strings.ToLower(r.Key)]; ok {
+		delete(db.database, r.Key)
+		response.Value = val
+		response.Message = "OK"
+		response.Status = 0
+		return response, nil
+	}
+	return response, errors.New("no such key present")
+
+}
+
+// GetRange returns a given portion of a slice
+func (db *DB) GetRange(r *resp.GetRangeRequest) (resp.GetResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.GetResponse
+
+	if val, ok := db.database[strings.ToLower(r.Key)]; ok {
+		if fmt.Sprint(reflect.TypeOf(val)) != "[]interface {}" {
+			return response, errors.New("associated value is not an array")
+		}
+		value := val.([]interface{})
+		if r.Start < 0 || r.Stop > len(value) {
+			return response, errors.New("range does not exist")
+		}
+		if r.Stop == -1 {
+			r.Stop = len(value)
+		}
+		response.Value = value[r.Start:r.Stop]
+		response.Message = "OK"
+		response.Status = 0
+		return response, nil
+	}
+	return response, errors.New("no such key present")
+}
+
+// AddToArray appends at a particular index or at the end
+func (db *DB) AddToArray(r *resp.AddToArrayRequest) (resp.SetResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.SetResponse
+
+	if val, ok := db.database[strings.ToLower(r.Key)]; ok {
+		if fmt.Sprint(reflect.TypeOf(val)) != "[]interface {}" {
+			return response, errors.New("associated value is not an array")
+		}
+		value := val.([]interface{})
+		if r.Index < -1 || r.Index >= len(value) {
+			return response, errors.New("given index does not exist")
+		}
+		if r.Index == -1 {
+			value = append(value, r.Value)
+			db.database[strings.ToLower(r.Key)] = value
+			response.Message = "OK"
+			response.Status = 0
+			return response, nil
+		} else {
+			var modifiedArray []interface{}
+			modifiedArray = append(modifiedArray, value[:r.Index]...)
+			modifiedArray = append(modifiedArray, r.Value)
+			modifiedArray = append(modifiedArray, value[r.Index:]...)
+			db.database[strings.ToLower(r.Key)] = modifiedArray
+			response.Message = "OK"
+			response.Status = 0
+			return response, nil
+		}
+	}
+	return response, errors.New("no such key present")
+}
+
+// DeleteFromArray deletes the element at the given index
+func (db *DB) DeleteFromArray(r *resp.DeleteFromArrayRequest) (resp.DeleteResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.DeleteResponse
+
+	if val, ok := db.database[strings.ToLower(r.Key)]; ok {
+		if fmt.Sprint(reflect.TypeOf(val)) != "[]interface {}" {
+			return response, errors.New("associated value is not an array")
+		}
+		value := val.([]interface{})
+		if r.Index < -1 || r.Index >= len(value) {
+			return response, errors.New("given index does not exist")
+		}
+
+		if r.Index == 0 {
+			response.Value = value[0]
+			value = value[1:]
+			db.database[strings.ToLower(r.Key)] = value
+			response.Message = "OK"
+			response.Status = 0
+			return response, nil
+		} else if r.Index == len(value)-1 {
+			response.Value = value[r.Index]
+			value = value[:len(value)-1]
+			db.database[strings.ToLower(r.Key)] = value
+			response.Message = "OK"
+			response.Status = 0
+			return response, nil
+		} else {
+			response.Value = value[r.Index]
+			var modifiedArray []interface{}
+			modifiedArray = append(modifiedArray, value[:r.Index]...)
+			modifiedArray = append(modifiedArray, value[r.Index+1:]...)
+			db.database[strings.ToLower(r.Key)] = modifiedArray
+			response.Message = "OK"
+			response.Status = 0
+			return response, nil
+		}
+	}
+	return response, errors.New("no such key present")
 }
