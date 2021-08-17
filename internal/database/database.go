@@ -66,6 +66,23 @@ func (db *DB) Get(r *resp.GetRequest) (resp.GetResponse, error) {
 	return response, errors.New("no such key present")
 }
 
+func (db *DB) Delete(r *resp.DeleteRequest) (resp.DeleteResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.DeleteResponse
+
+	if val, ok := db.database[strings.ToLower(r.Key)]; ok {
+		delete(db.database, r.Key)
+		response.Value = val
+		response.Message = "OK"
+		response.Status = 0
+		return response, nil
+	}
+	return response, errors.New("no such key present")
+
+}
+
 // GetRange returns a given portion of a slice
 func (db *DB) GetRange(r *resp.GetRangeRequest) (resp.GetResponse, error) {
 	db.mu.Lock()

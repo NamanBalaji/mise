@@ -17,6 +17,8 @@ func routes() http.Handler {
 
 	mux.Post("/get", handlers.Repo.Get)
 
+	mux.Delete("/delete", handlers.Repo.Delete)
+
 	mux.Post("/get-range", handlers.Repo.GetRange)
 
 	mux.Post("/add", handlers.Repo.Add)

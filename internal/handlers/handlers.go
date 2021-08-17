@@ -97,6 +97,34 @@ func (m *Repository) Get(w http.ResponseWriter, r *http.Request) {
 	w.Write(resp)
 }
 
+func (m *Repository) Delete(w http.ResponseWriter, r *http.Request) {
+	var body resp.DeleteRequest
+	err := helpers.RequestToStruct(&body, r)
+	if err != nil {
+		w.Write([]byte(`{
+			"Error": "error occurred while reading the request body, please check if the request body hs the correct structure"
+		}`))
+		return
+	}
+	response, err := m.DB.Delete(&body)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	resp, err := json.Marshal(response)
+
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write(resp)
+}
+
 // GetRange is the handler for getting a portion of an array
 func (m *Repository) GetRange(w http.ResponseWriter, r *http.Request) {
 	var body resp.GetRangeRequest

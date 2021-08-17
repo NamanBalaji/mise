@@ -13,6 +13,7 @@ type GetResponse struct {
 	Message string      `json:"message"`
 }
 
+// response structure when a delete action completes
 type DeleteResponse struct {
 	Value   interface{} `json:"value"`
 	Status  int         `json:"status"`

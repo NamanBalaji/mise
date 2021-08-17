@@ -25,6 +25,12 @@ type AddToArrayRequest struct {
 	Index int         `json:"index"`
 }
 
+// request structure for deleteing a key-value pair
+type DeleteRequest struct {
+	Key string `json:"key"`
+}
+
+// request structure for deleting an element from an array
 type DeleteFromArrayRequest struct {
 	Key   string `json:"key"`
 	Index int    `json:"index"`
