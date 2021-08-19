@@ -3,20 +3,20 @@
 ##### Mise is an in-memory key-value caching server that runs on top of HTTP
 
 ## Features
-Current supports the following:
-    - All basic data types
-    - Arrays
-    - Linked Lists
+- Current supports the following:
+   - All basic data types
+   - Arrays
+   - Linked Lists
 
-All  basic data types support SET GET and DELETE
-Arrays support `SET` `GET` `GET_RANGE` `DELETE_INDEX` `ADD`
-Linked Lists supports `SET_LIST` `GET_FIRST` `GET_LAST` `SET_FIRST` `SET_LAST` `DELETE_FIRST` `DELETE_LAST`. Linked lists are intended to be used as stacks and Queues
+- All  basic data types support SET GET and DELETE
+- Arrays support `SET` `GET` `GET_RANGE` `DELETE_INDEX` `ADD`
+- Linked Lists supports `SET_LIST` `GET_FIRST` `GET_LAST` `SET_FIRST` `SET_LAST` `DELETE_FIRST` `DELETE_LAST`. Linked lists are intended to be used as stacks and Queues
 
 ## Installation
 ```
 Download the app from the release page
 ```
-While running users can set custo port numbers by using the `-p` flag 
+While running users can set custom port numbers by using the `-p` flag 
 
 ## Usage
   - Ping
@@ -168,13 +168,13 @@ While running users can set custo port numbers by using the `-p` flag
     ```
     
 ### Run locally
-Download and install `go`
-Clone this repo and make changes.
-Then run `run.sh`
+- Download and install `go`
+- Clone this repo and make changes.
+- Then run `run.sh`
 
 ### Future work
-Add support for sorted sets
-Add support for Trees
-Persist data after server dies
-Create a CLI tool
-Develop client SDKs 
+- Add support for sorted sets
+- Add support for Trees
+- Persist data after server dies
+- Create a CLI tool
+- Develop client SDKs 
