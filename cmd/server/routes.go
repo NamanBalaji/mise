@@ -15,7 +15,11 @@ func routes() http.Handler {
 
 	mux.Post("/set", handlers.Repo.Set)
 
+	mux.Post("/set-list", handlers.Repo.SetList)
+
 	mux.Post("/get", handlers.Repo.Get)
+
+	mux.Post("/get-list", handlers.Repo.GetListNodeValue)
 
 	mux.Delete("/delete", handlers.Repo.Delete)
 
@@ -23,7 +27,11 @@ func routes() http.Handler {
 
 	mux.Post("/add", handlers.Repo.Add)
 
+	mux.Post("/add-list", handlers.Repo.AddToLinkedList)
+
 	mux.Delete("/delete-element", handlers.Repo.DeleteIndex)
+
+	mux.Delete("/delete-list", handlers.Repo.DeleteFromLinkedList)
 
 	return mux
 }
