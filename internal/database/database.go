@@ -229,7 +229,7 @@ func (db *DB) SetList(r *resp.SetRequest) (resp.SetResponse, error) {
 }
 
 // GetListNodeValue returns the value of the first or last node of the linked list
-func (db *DB) GetListNodeValue(r *resp.GetListNode) (resp.GetResponse, error) {
+func (db *DB) GetListNodeValue(r *resp.GetListNodeRequest) (resp.GetResponse, error) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
@@ -270,6 +270,30 @@ func (db *DB) AddToLinkedList(r *resp.AddToListRequest) (resp.SetResponse, error
 			linkedList.AddHead(r.Value)
 		} else {
 			linkedList.AddTail(r.Value)
+		}
+		response.Message = "OK"
+		response.Status = 0
+		return response, nil
+	}
+	return response, errors.New("no such key present")
+}
+
+//DeleteFromLinkedList deletes the first or last node from the linked list
+func (db *DB) DeleteFromLinkedList(r *resp.DeleteListNodeRequest) (resp.DeleteResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.DeleteResponse
+	if list, ok := db.database[strings.ToLower(r.Key)]; ok {
+		if fmt.Sprint(reflect.TypeOf(list)) != "*dataStructures.LinkedList" {
+			return response, errors.New("associated value is not of type list")
+		}
+
+		linkedList := db.database[r.Key].(*dataStructures.LinkedList)
+		if r.DelFirst {
+			response.Value = linkedList.DelHead().Value()
+		} else {
+			response.Value = linkedList.DelTail().Value()
 		}
 		response.Message = "OK"
 		response.Status = 0

@@ -44,7 +44,13 @@ type AddToListRequest struct {
 }
 
 // request structure for getting a node value
-type GetListNode struct {
+type GetListNodeRequest struct {
 	Key      string `json:"key"`
 	GetFirst bool   `json:"get_first"`
+}
+
+// request structure for deleteing a linked list node
+type DeleteListNodeRequest struct {
+	Key      string `json:"key"`
+	DelFirst bool   `json:"delete_first"`
 }

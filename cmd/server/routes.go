@@ -31,5 +31,7 @@ func routes() http.Handler {
 
 	mux.Delete("/delete-element", handlers.Repo.DeleteIndex)
 
+	mux.Delete("/delete-list", handlers.Repo.DeleteFromLinkedList)
+
 	return mux
 }

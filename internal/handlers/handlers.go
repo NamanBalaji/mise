@@ -242,7 +242,7 @@ func (m *Repository) SetList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) GetListNodeValue(w http.ResponseWriter, r *http.Request) {
-	var body resp.GetListNode
+	var body resp.GetListNodeRequest
 
 	err := helpers.RequestToStruct(&body, r)
 	if err != nil {
@@ -283,6 +283,36 @@ func (m *Repository) AddToLinkedList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response, err := m.DB.AddToLinkedList(&body)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	resp, err := json.Marshal(response)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write(resp)
+}
+
+func (m *Repository) DeleteFromLinkedList(w http.ResponseWriter, r *http.Request) {
+	var body resp.DeleteListNodeRequest
+
+	err := helpers.RequestToStruct(&body, r)
+	if err != nil {
+		w.Write([]byte(`{
+			"Error": "error occurred while reading the request body, please check if the request body hs the correct structure"
+		}`))
+		return
+	}
+	response, err := m.DB.DeleteFromLinkedList(&body)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
