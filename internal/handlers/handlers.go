@@ -271,3 +271,33 @@ func (m *Repository) GetListNodeValue(w http.ResponseWriter, r *http.Request) {
 
 	w.Write(resp)
 }
+
+// AddToLinkedList is the handler for appending a value to linked list
+func (m *Repository) AddToLinkedList(w http.ResponseWriter, r *http.Request) {
+	var body resp.AddToListRequest
+	err := helpers.RequestToStruct(&body, r)
+	if err != nil {
+		w.Write([]byte(`{
+			"Error": "error occurred while reading the request body, please check if the request body hs the correct structure"
+		}`))
+		return
+	}
+	response, err := m.DB.AddToLinkedList(&body)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	resp, err := json.Marshal(response)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write(resp)
+}

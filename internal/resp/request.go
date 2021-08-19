@@ -37,7 +37,7 @@ type DeleteFromArrayRequest struct {
 }
 
 // request structure for adding to a list
-type AddListRequest struct {
+type AddToListRequest struct {
 	Key      string      `json:"key"`
 	Value    interface{} `json:"value"`
 	AddFirst bool        `json:"add_first"`
