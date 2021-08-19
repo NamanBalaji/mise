@@ -169,8 +169,8 @@ func (db *DB) DeleteFromArray(r *resp.DeleteFromArrayRequest) (resp.DeleteRespon
 			response.Message = "OK"
 			response.Status = 0
 			return response, nil
-		} else if r.Index == len(value)-1 {
-			response.Value = value[r.Index]
+		} else if r.Index == -1 {
+			response.Value = value[len(value)-1]
 			value = value[:len(value)-1]
 			db.database[strings.ToLower(r.Key)] = value
 			response.Message = "OK"
