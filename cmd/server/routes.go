@@ -15,7 +15,11 @@ func routes() http.Handler {
 
 	mux.Post("/set", handlers.Repo.Set)
 
+	mux.Post("/set-list", handlers.Repo.SetList)
+
 	mux.Post("/get", handlers.Repo.Get)
+
+	mux.Post("/get-list", handlers.Repo.GetListNodeValue)
 
 	mux.Delete("/delete", handlers.Repo.Delete)
 

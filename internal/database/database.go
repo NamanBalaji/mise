@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/NamanBalaji/mise/internal/dataStructures"
 	"github.com/NamanBalaji/mise/internal/resp"
 )
 
@@ -66,6 +67,7 @@ func (db *DB) Get(r *resp.GetRequest) (resp.GetResponse, error) {
 	return response, errors.New("no such key present")
 }
 
+// Delete deletes a key from the database
 func (db *DB) Delete(r *resp.DeleteRequest) (resp.DeleteResponse, error) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
@@ -184,6 +186,68 @@ func (db *DB) DeleteFromArray(r *resp.DeleteFromArrayRequest) (resp.DeleteRespon
 			response.Status = 0
 			return response, nil
 		}
+	}
+	return response, errors.New("no such key present")
+}
+
+// SetList is used to set a linked list
+func (db *DB) SetList(r *resp.SetRequest) (resp.SetResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.SetResponse
+	if r.Key == "" || r.Value == nil {
+		return response, errors.New("invalid key or value")
+	}
+
+	if _, ok := db.database[strings.ToLower(r.Key)]; ok {
+		response.Message = "key already present please use ADD if you are trying to add to the list"
+		response.Status = 1
+		return response, nil
+	}
+
+	list := dataStructures.NewLinkedList()
+
+	// if the value is an array create a new list with i nodes
+	if fmt.Sprint(reflect.TypeOf(r.Value)) == "[]interface {}" {
+		array := r.Value.([]interface{})
+		for _, v := range array {
+			list.AddTail(v)
+		}
+		db.database[r.Key] = list
+		response.Message = "OK"
+		response.Status = 0
+		return response, nil
+	}
+
+	// if only a single value passed
+	list.AddHead(r.Value)
+	db.database[r.Key] = list
+	response.Message = "OK"
+	response.Status = 0
+	return response, nil
+}
+
+// GetListNodeValue returns the value of the first or last node of the linked list
+func (db *DB) GetListNodeValue(r *resp.GetListNode) (resp.GetResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.GetResponse
+
+	if list, ok := db.database[strings.ToLower(r.Key)]; ok {
+		if fmt.Sprint(reflect.TypeOf(list)) != "*dataStructures.LinkedList" {
+			return response, errors.New("associated value is not of type list")
+		}
+		linkedList := list.(*dataStructures.LinkedList)
+		if r.GetFirst {
+			response.Value = linkedList.GetFirst().Value()
+		} else {
+			response.Value = linkedList.GetLast().Value()
+		}
+		response.Message = "OK"
+		response.Status = 0
+		return response, nil
 	}
 	return response, errors.New("no such key present")
 }

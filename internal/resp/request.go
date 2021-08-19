@@ -35,3 +35,16 @@ type DeleteFromArrayRequest struct {
 	Key   string `json:"key"`
 	Index int    `json:"index"`
 }
+
+// request structure for adding to a list
+type AddListRequest struct {
+	Key      string      `json:"key"`
+	Value    interface{} `json:"value"`
+	AddFirst bool        `json:"add_first"`
+}
+
+// request structure for getting a node value
+type GetListNode struct {
+	Key      string `json:"key"`
+	GetFirst bool   `json:"get_first"`
+}
