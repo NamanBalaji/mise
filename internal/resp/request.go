@@ -54,3 +54,8 @@ type DeleteListNodeRequest struct {
 	Key      string `json:"key"`
 	DelFirst bool   `json:"delete_first"`
 }
+
+type SSetGDRequest struct {
+	Key string `json:"key"`
+	Max bool   `json:"max"`
+}

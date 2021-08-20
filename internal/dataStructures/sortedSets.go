@@ -5,25 +5,25 @@ import (
 )
 
 type SortedSet struct {
-	data []int
+	data []float64
 }
 
-func NewSortedSet(elements []int) *SortedSet {
-	l := SortedSet{data: make([]int, 0)}
+func NewSortedSet(elements []float64) *SortedSet {
+	l := SortedSet{data: make([]float64, 0)}
 	for _, e := range elements {
 		if !l.contains(e) {
 			l.data = append(l.data, e)
 		}
 	}
-	sort.Ints(l.data)
+	sort.Float64s(l.data)
 	return &l
 }
 
 // Add adds an element to the set. If it already exists, nothing
 // happens, as set elements are unique.
-func (l *SortedSet) Add(element int) {
+func (l *SortedSet) Add(element float64) {
 	if len(l.data) == 0 {
-		l.data = []int{element}
+		l.data = []float64{element}
 		return
 	}
 
@@ -32,15 +32,15 @@ func (l *SortedSet) Add(element int) {
 	}
 
 	l.data = append(l.data, element)
-	sort.Ints(l.data)
+	sort.Float64s(l.data)
 }
 
 // DeleteMax removes the last element
-func (l *SortedSet) DeleteMax() int {
+func (l *SortedSet) DeleteMax() float64 {
 
 	if len(l.data) == 1 {
 		elem := l.data[0]
-		l.data = make([]int, 0)
+		l.data = make([]float64, 0)
 		return elem
 	}
 
@@ -50,11 +50,11 @@ func (l *SortedSet) DeleteMax() int {
 }
 
 // DeleteMin removes the first element
-func (l *SortedSet) DeleteMin() int {
+func (l *SortedSet) DeleteMin() float64 {
 
 	if len(l.data) == 1 {
 		elem := l.data[0]
-		l.data = make([]int, 0)
+		l.data = make([]float64, 0)
 		return elem
 	}
 	elem := l.data[0]
@@ -63,7 +63,7 @@ func (l *SortedSet) DeleteMin() int {
 }
 
 // Contains reports if the set contains the given element.
-func (l *SortedSet) contains(search int) bool {
+func (l *SortedSet) contains(search float64) bool {
 	for _, e := range l.data {
 		if search == e {
 			return true
@@ -72,10 +72,14 @@ func (l *SortedSet) contains(search int) bool {
 	return false
 }
 
-func (l *SortedSet) GetMin() int {
+func (l *SortedSet) GetMin() float64 {
 	return l.data[0]
 }
 
-func (l *SortedSet) GetMax() int {
+func (l *SortedSet) GetMax() float64 {
 	return l.data[len(l.data)-1]
+}
+
+func (l *SortedSet) Size() int {
+	return len(l.data)
 }

@@ -17,9 +17,13 @@ func routes() http.Handler {
 
 	mux.Post("/set-list", handlers.Repo.SetList)
 
+	mux.Post("/set-sortedSet", handlers.Repo.SetSortedSet)
+
 	mux.Post("/get", handlers.Repo.Get)
 
 	mux.Post("/get-list", handlers.Repo.GetListNodeValue)
+
+	mux.Post("/get-sortedSet", handlers.Repo.GetFromSortedSet)
 
 	mux.Delete("/delete", handlers.Repo.Delete)
 
@@ -29,9 +33,13 @@ func routes() http.Handler {
 
 	mux.Post("/add-list", handlers.Repo.AddToLinkedList)
 
+	mux.Post("/add-sortedSet", handlers.Repo.AddToSortedSet)
+
 	mux.Delete("/delete-element", handlers.Repo.DeleteIndex)
 
 	mux.Delete("/delete-list", handlers.Repo.DeleteFromLinkedList)
+
+	mux.Delete("/delete-sortedSet", handlers.Repo.DeleteFromSortedSet)
 
 	return mux
 }
