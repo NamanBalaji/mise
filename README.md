@@ -11,6 +11,7 @@
 - All  basic data types support SET GET and DELETE
 - Arrays support `SET` `GET` `GET_RANGE` `DELETE_INDEX` `ADD`
 - Linked Lists supports `SET_LIST` `GET_FIRST` `GET_LAST` `SET_FIRST` `SET_LAST` `DELETE_FIRST` `DELETE_LAST`. Linked lists are intended to be used as stacks and Queues
+- Sorted Sets supports `Set_SORTED_SET`, `GET_MIN`, `GET_MAX`, `ADD`, `DELETE_MIN` `DELETE_MAX`. Sorted sets can currently hold only integer types
 
 ## Installation
 ```
@@ -166,6 +167,62 @@ While running users can set custom port numbers by using the `-p` flag
         "status": 0
     }
     ```
+- SET SORTED SET: Initializes and appends values to a sorted set
+    ```
+    METHOD: POST
+    URL:  http://localhost:<PORT_NUM/set-sortedSet
+    BODY: {
+        "key": <string>,
+        "value": <int> // accepts integers and integer arrays
+    }
+    RESPONSE: {
+        "message": "OK",
+        "status": 0
+    }
+    ```
+- ADD SORTED SET: Appends a value to a sorted set
+    ```
+    METHOD: POST
+    URL:  http://localhost:<PORT_NUM/add-sortedSet
+    BODY: {
+        "key": <string>,
+        "value": <int>
+    }
+    RESPONSE: {
+        "message": "OK",
+        "status": 0
+    }
+    ```
+- GET SORTED SET: Retrieves the minimum or maximum value from the sorted set
+    ```
+    METHOD: POST
+    URL:  http://localhost:<PORT_NUM/get-sortedSet
+    BODY: {
+        "key": <string>,
+        "max": <bool> //if true returns thr maximum value
+    }
+    RESPONSE: {
+        "value": <some int>
+        "message": "OK",
+        "status": 0
+    }
+    ```
+
+- DELETE SORTED SET: Deletes the minimum or maximum value from the sorted set
+    ```
+    METHOD: POST
+    URL:  http://localhost:<PORT_NUM/delete-sortedSet
+    BODY: {
+        "key": <string>,
+        "max": <bool> //if true returns thr maximum value
+    }
+    RESPONSE: {
+        "value": <some int>
+        "message": "OK",
+        "status": 0
+    }
+    ```
+
     
 ### Run locally
 - Download and install `go`
@@ -173,7 +230,6 @@ While running users can set custom port numbers by using the `-p` flag
 - Then run `run.sh`
 
 ### Future work
-- Add support for sorted sets
 - Add support for Trees
 - Persist data after server dies
 - Create a CLI tool

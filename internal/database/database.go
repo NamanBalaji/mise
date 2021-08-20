@@ -301,3 +301,120 @@ func (db *DB) DeleteFromLinkedList(r *resp.DeleteListNodeRequest) (resp.DeleteRe
 	}
 	return response, errors.New("no such key present")
 }
+
+//SetSortedSet initializes a sorted set and stores it into the DB
+func (db *DB) SetSortedSet(r *resp.SetRequest) (resp.SetResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.SetResponse
+	if r.Key == "" || r.Value == nil {
+		return response, errors.New("invalid key or value")
+	}
+
+	if _, ok := db.database[strings.ToLower(r.Key)]; ok {
+		response.Message = "key already present please use ADD if you are trying to add to the list"
+		response.Status = 1
+		return response, nil
+	}
+
+	var sSet *dataStructures.SortedSet
+
+	fmt.Println(reflect.TypeOf(r.Value))
+	if fmt.Sprint(reflect.TypeOf(r.Value)) == "[]interface {}" || fmt.Sprint(reflect.TypeOf(r.Value)) == "float64" {
+		if fmt.Sprint(reflect.TypeOf(r.Value)) == "[]interface {}" {
+			for i, v := range r.Value.([]interface{}) {
+				if fmt.Sprint(reflect.TypeOf(v)) != "float64" {
+					return response, errors.New("sorted set only takes in integer values")
+				}
+				if i == 0 {
+					sSet = dataStructures.NewSortedSet([]float64{v.(float64)})
+				} else {
+					sSet.Add(v.(float64))
+				}
+
+			}
+		} else {
+			sSet = dataStructures.NewSortedSet([]float64{r.Value.(float64)})
+		}
+	} else {
+		return response, errors.New("sorted set only takes in integer values")
+	}
+
+	db.database[r.Key] = sSet
+	response.Message = "OK"
+	response.Status = 0
+	return response, nil
+}
+
+//AddSortedSet adds a value to sorted set
+func (db *DB) AddSortedSet(r *resp.SetRequest) (resp.SetResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.SetResponse
+	if r.Key == "" || r.Value == nil {
+		return response, errors.New("invalid key or value")
+	}
+	if fmt.Sprint(reflect.TypeOf(r.Value)) != "float64" {
+		return response, errors.New("sorted set oly takesin integer values")
+	}
+	if _, ok := db.database[strings.ToLower(r.Key)]; ok {
+		sSet := db.database[r.Key].(*dataStructures.SortedSet)
+		sSet.Add(r.Value.(float64))
+		response.Message = "OK"
+		response.Status = 0
+		return response, nil
+	}
+
+	return response, errors.New("no such key present")
+}
+
+// GetFromSortedSet retrieves the min or max value from the sorted set
+func (db *DB) GetFromSortedSet(r *resp.SSetGDRequest) (resp.GetResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.GetResponse
+	if _, ok := db.database[strings.ToLower(r.Key)]; ok {
+		sSet := db.database[r.Key].(*dataStructures.SortedSet)
+
+		if sSet.Size() == 0 {
+			return response, errors.New("set is empty")
+		}
+		if r.Max {
+			response.Value = sSet.GetMax()
+		} else {
+			response.Value = sSet.GetMin()
+		}
+		response.Message = "OK"
+		response.Status = 0
+		return response, nil
+	}
+
+	return response, errors.New("no such key present")
+}
+
+// DeleteFromSortedSet deletes the min or max value from the sorted set
+func (db *DB) DeleteFromSortedSet(r *resp.SSetGDRequest) (resp.GetResponse, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var response resp.GetResponse
+	if _, ok := db.database[strings.ToLower(r.Key)]; ok {
+		sSet := db.database[r.Key].(*dataStructures.SortedSet)
+		if sSet.Size() == 0 {
+			return response, errors.New("set is empty")
+		}
+		if r.Max {
+			response.Value = sSet.DeleteMax()
+		} else {
+			response.Value = sSet.DeleteMin()
+		}
+		response.Message = "OK"
+		response.Status = 0
+		return response, nil
+	}
+
+	return response, errors.New("no such key present")
+}
