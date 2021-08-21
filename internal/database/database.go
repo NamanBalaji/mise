@@ -320,7 +320,6 @@ func (db *DB) SetSortedSet(r *resp.SetRequest) (resp.SetResponse, error) {
 
 	var sSet *dataStructures.SortedSet
 
-	fmt.Println(reflect.TypeOf(r.Value))
 	if fmt.Sprint(reflect.TypeOf(r.Value)) == "[]interface {}" || fmt.Sprint(reflect.TypeOf(r.Value)) == "float64" {
 		if fmt.Sprint(reflect.TypeOf(r.Value)) == "[]interface {}" {
 			for i, v := range r.Value.([]interface{}) {
@@ -416,5 +415,27 @@ func (db *DB) DeleteFromSortedSet(r *resp.SSetGDRequest) (resp.GetResponse, erro
 		return response, nil
 	}
 
+	return response, errors.New("no such key present")
+}
+
+// GetSize returns the size of a key's value
+func (db *DB) GetSize(key string) (resp.SizeResponse, error) {
+	var response resp.SizeResponse
+	if data, ok := db.database[strings.ToLower(key)]; ok {
+		switch {
+		case fmt.Sprint(reflect.TypeOf(data)) == "*dataStructures.LinkedList":
+			d := data.(*dataStructures.LinkedList)
+			response.Value = int(d.Len())
+		case fmt.Sprint(reflect.TypeOf(data)) == "*dataStructures.SortedSet":
+			d := data.(*dataStructures.SortedSet)
+			response.Value = d.Size()
+		case fmt.Sprint(reflect.TypeOf(data)) == "[]interface {}":
+			d := data.([]interface{})
+			response.Value = len(d)
+		default:
+			response.Value = int(reflect.TypeOf(data).Size())
+		}
+		return response, nil
+	}
 	return response, errors.New("no such key present")
 }

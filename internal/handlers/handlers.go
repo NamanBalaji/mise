@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/go-chi/chi"
+
 	"github.com/NamanBalaji/mise/internal/config"
 	"github.com/NamanBalaji/mise/internal/database"
 	"github.com/NamanBalaji/mise/internal/helpers"
@@ -435,6 +437,26 @@ func (m *Repository) DeleteFromSortedSet(w http.ResponseWriter, r *http.Request)
 	w.Header().Set("Content-Type", "application/json")
 	resp, err := json.Marshal(response)
 
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write(resp)
+}
+
+func (m *Repository) GetSize(w http.ResponseWriter, r *http.Request) {
+	key := chi.URLParam(r, "key")
+	response, err := m.DB.GetSize(key)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	resp, err := json.Marshal(response)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))

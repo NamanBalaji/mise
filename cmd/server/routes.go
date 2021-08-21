@@ -13,6 +13,8 @@ func routes() http.Handler {
 
 	mux.Get("/ping", handlers.Repo.Ping)
 
+	mux.Get("/size/{key}", handlers.Repo.GetSize)
+
 	mux.Post("/set", handlers.Repo.Set)
 
 	mux.Post("/set-list", handlers.Repo.SetList)

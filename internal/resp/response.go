@@ -19,3 +19,8 @@ type DeleteResponse struct {
 	Status  int         `json:"status"`
 	Message string      `json:"message"`
 }
+
+// response structure when size of a key is requested
+type SizeResponse struct {
+	Value int `json:"value"`
+}
