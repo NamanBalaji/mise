@@ -82,7 +82,7 @@ While running users can set custom port numbers by using the `-p` flag
 - GET_RANGE : Used to get a range from an array
     ```
     METHOD: POST
-    URL:  http://localhost:<PORT_NUM/get-range
+    URL:  http://localhost:<PORT_NUM>/get-range
     BODY: {
         "key": <string>,
         "start": <int>,
@@ -101,7 +101,7 @@ While running users can set custom port numbers by using the `-p` flag
 - DELETE_INDEX: Used to delete value at a particular index from an array
      ```
     METHOD: DELETE
-    URL:  http://localhost:<PORT_NUM/delete-element
+    URL:  http://localhost:<PORT_NUM>/delete-element
     BODY: {
         "key": <string>,
         "index": <int> //put -1 if want to delete the last element
@@ -115,7 +115,7 @@ While running users can set custom port numbers by using the `-p` flag
 - SET_LIST: Used to set a key wth a linked list. 
      ```
     METHOD: POST
-    URL:  http://localhost:<PORT_NUM/set-list
+    URL:  http://localhost:<PORT_NUM>/set-list
     BODY: {
         "key": <string>,
         "value": <some value> // can be a basic data type or an array
@@ -128,7 +128,7 @@ While running users can set custom port numbers by using the `-p` flag
 - GET_FIRST/GET_LAST: Works similar to a peek function
     ```
     METHOD: POST
-    URL:  http://localhost:<PORT_NUM/get-list
+    URL:  http://localhost:<PORT_NUM>/get-list
     BODY: {
         "key": <string>,
         "get_first": <bool> // set `true` to peek at the head
@@ -142,7 +142,7 @@ While running users can set custom port numbers by using the `-p` flag
 - SET_FIRST/SET_LAST: Works similar to a push/offer function
     ```
     METHOD: POST
-    URL:  http://localhost:<PORT_NUM/add-list
+    URL:  http://localhost:<PORT_NUM>/add-list
     BODY: {
         "key": <string>,
         "value": <some value>,
@@ -156,7 +156,7 @@ While running users can set custom port numbers by using the `-p` flag
 - DELETE_FIRST/DELETE_LAST: Works similar to a pop/remove function
      ```
     METHOD: DELETE
-    URL:  http://localhost:<PORT_NUM/delete-list
+    URL:  http://localhost:<PORT_NUM>/delete-list
     BODY: {
         "key": <string>,
         "delete_first": <bool> //set true if you want to delete the head
@@ -170,7 +170,7 @@ While running users can set custom port numbers by using the `-p` flag
 - SET SORTED SET: Initializes and appends values to a sorted set
     ```
     METHOD: POST
-    URL:  http://localhost:<PORT_NUM/set-sortedSet
+    URL:  http://localhost:<PORT_NUM>/set-sortedSet
     BODY: {
         "key": <string>,
         "value": <int> // accepts integers and integer arrays
@@ -183,7 +183,7 @@ While running users can set custom port numbers by using the `-p` flag
 - ADD SORTED SET: Appends a value to a sorted set
     ```
     METHOD: POST
-    URL:  http://localhost:<PORT_NUM/add-sortedSet
+    URL:  http://localhost:<PORT_NUM>/add-sortedSet
     BODY: {
         "key": <string>,
         "value": <int>
@@ -196,7 +196,7 @@ While running users can set custom port numbers by using the `-p` flag
 - GET SORTED SET: Retrieves the minimum or maximum value from the sorted set
     ```
     METHOD: POST
-    URL:  http://localhost:<PORT_NUM/get-sortedSet
+    URL:  http://localhost:<PORT_NUM>/get-sortedSet
     BODY: {
         "key": <string>,
         "max": <bool> //if true returns thr maximum value
@@ -211,7 +211,7 @@ While running users can set custom port numbers by using the `-p` flag
 - DELETE SORTED SET: Deletes the minimum or maximum value from the sorted set
     ```
     METHOD: POST
-    URL:  http://localhost:<PORT_NUM/delete-sortedSet
+    URL:  http://localhost:<PORT_NUM>/delete-sortedSet
     BODY: {
         "key": <string>,
         "max": <bool> //if true returns thr maximum value
@@ -223,6 +223,14 @@ While running users can set custom port numbers by using the `-p` flag
     }
     ```
 
+- SIZE: Fetches the size of a key's associated value. Returns the number of elements for arrays, Sorted sets and linked lists.
+```
+    METHOD: GET
+    URL:  http://localhost:<PORT_NUM>/size/<key>
+    RESPONSE: {
+        "value": <some int>
+    }
+    ```
     
 ### Run locally
 - Download and install `go`
